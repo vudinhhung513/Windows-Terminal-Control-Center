@@ -1,0 +1,671 @@
+/*
+ * file: styles.css
+ * Chuc nang: Style chinh cho Terminal Control Center.
+ * Dark theme, mobile-first, responsive. Khong phu thuoc framework ngoai.
+ */
+
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #1a1b2e;
+  --bg-secondary: #242640;
+  --bg-card: #2a2d4a;
+  --text-primary: #e4e4f0;
+  --text-secondary: #a0a0b8;
+  --accent: #6c63ff;
+  --accent-hover: #5a52e0;
+  --danger: #ff4d6a;
+  --danger-hover: #e0334f;
+  --success: #4cdf8b;
+  --border: #3a3d5c;
+  --header-height: 56px;
+  --radius: 8px;
+}
+
+html, body {
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+/* === Header (dinh tren cung) === */
+/* Chen khoang trong an toan o phia tren (safe-area-inset-top) de noi dung khong
+   bi che boi Dynamic Island / tai tho (notch) khi chay PWA fullscreen tren
+   iPhone. Tren trinh duyet thuong cac bien env() = 0 nen khong anh huong. */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) calc(16px + env(safe-area-inset-right, 0px)) 0 calc(16px + env(safe-area-inset-left, 0px));
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.header__title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* === Buttons === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, opacity 0.2s;
+  text-decoration: none;
+  color: #fff;
+}
+
+.btn:active {
+  opacity: 0.8;
+}
+
+.btn--primary {
+  background: var(--accent);
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn--danger {
+  background: var(--danger);
+}
+
+.btn--danger:hover {
+  background: var(--danger-hover);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn--ghost:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.btn--small {
+  min-height: 36px;
+  min-width: 36px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+/* Nut chi co icon (vuong, gon) — dung cho nut doi theme tren header */
+.btn--icon {
+  padding: 6px;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* === Form elements === */
+.input {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* === Layout containers === */
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* === Login form === */
+.login-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height));
+  min-height: calc(100dvh - var(--header-height));
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  padding: 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+}
+
+.login-form__title {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* === Session list (dashboard) === */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.toolbar .input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.session-list {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+}
+
+.session-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.session-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.session-card__name {
+  font-weight: 600;
+  font-size: 1rem;
+  word-break: break-all;
+}
+
+.session-card__meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.session-card__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* === Badges === */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.badge--attached {
+  background: var(--success);
+  color: #1a1b2e;
+}
+
+.badge--detached {
+  background: var(--border);
+  color: var(--text-secondary);
+}
+
+/* === Error / Message === */
+.message {
+  padding: 12px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.message--error {
+  background: rgba(255, 77, 106, 0.15);
+  color: var(--danger);
+  border: 1px solid var(--danger);
+}
+
+.message--info {
+  background: rgba(108, 99, 255, 0.15);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+/* === Terminal page layout === */
+/* Dung 100dvh (dynamic viewport height) de khit khung hien thi thuc te tren
+   mobile (tru thanh dia chi/menu trinh duyet); fallback 100vh cho trinh
+   duyet cu chua ho tro dvh. */
+.terminal-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+}
+
+.terminal-container {
+  flex: 1;
+  overflow: hidden;
+  padding: 4px;
+  background: #000;
+}
+
+.terminal-container .xterm {
+  height: 100%;
+}
+
+/* === Reconnect overlay === */
+.reconnect-overlay {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+}
+
+/* === Responsive (desktop) === */
+@media (min-width: 640px) {
+  .session-list {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+
+  .header {
+    padding: env(safe-area-inset-top, 0px) calc(24px + env(safe-area-inset-right, 0px)) 0 calc(24px + env(safe-area-inset-left, 0px));
+  }
+
+  .container {
+    padding: 24px;
+  }
+}
+
+/* === Version badge tren header === */
+.app-version {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-left: 6px;
+}
+
+/* === Tay cam keo-tha + trang thai keo === */
+.session-card__handle {
+  cursor: grab;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  user-select: none;
+  padding: 0 4px;
+  align-self: center;
+}
+
+.session-card[draggable="true"] {
+  cursor: default;
+}
+
+.session-card.dragging {
+  opacity: 0.5;
+  border-color: var(--accent);
+}
+
+/* === Ghi chu trong session card === */
+.session-card__note {
+  margin-top: 8px;
+  width: 100%;
+}
+
+.input--note {
+  min-height: 36px;
+  font-size: 0.85rem;
+}
+
+/* === Modal (settings) === */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.modal__title {
+  font-size: 1.2rem;
+}
+
+.modal__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* === Settings form === */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-group {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-group legend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 0 6px;
+}
+
+/* Input trong Settings gon hon (thap hon mac dinh 44px) de tiet kiem chieu cao */
+.settings-form .input {
+  min-height: 34px;
+  padding: 4px 10px;
+}
+
+/* Title + input cung mot hang de tiet kiem dien tich. Label trai co dinh,
+   input chiem phan con lai. */
+.settings-field {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+}
+
+.settings-field > span:first-child {
+  flex: 0 0 42%;
+  min-width: 0;
+}
+
+.settings-field .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-field small {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Man hinh rat hep: xuong cot de khong vo layout */
+@media (max-width: 420px) {
+  .settings-field {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+  }
+  .settings-field > span:first-child {
+    flex: none;
+  }
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+/* Thong bao trong Settings: lien ke nut Save, gon hon message mac dinh */
+#msg-settings {
+  margin-bottom: 0;
+  margin-top: 4px;
+  padding: 8px 10px;
+}
+
+.settings-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+/* Ghi chu/canh bao trong Settings (vd canh bao bao mat khi bat log) */
+.settings-hint {
+  margin: 4px 0 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+.settings-hint--warn {
+  color: var(--danger);
+}
+
+/* === O nhap lieu (bat/tat bang nut toggle tren control bar) === */
+.input-bar {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+}
+
+.input-bar__field {
+  flex: 1;
+  min-width: 0;
+  min-height: 40px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.input-bar__field:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.input-bar__send {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Thanh nut dieu khien terminal === */
+/* Them safe-area-inset-bottom de hang nut cuoi cung khong bi thanh Home
+   indicator cua iPhone che khi chay PWA fullscreen. */
+.control-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
+
+.ctrl-btn {
+  min-width: 44px;
+  min-height: 40px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ctrl-btn:hover {
+  background: var(--accent);
+}
+
+.ctrl-btn:active {
+  opacity: 0.8;
+}
+
+/* Nut bo tro dinh (Ctrl/Shift) khi dang bat: noi bat de biet se ap cho phim ke tiep */
+.ctrl-btn--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.control-bar__sep {
+  width: 1px;
+  align-self: stretch;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+/* === Quan ly log (modal Logs) === */
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.logs-list__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-card);
+}
+
+.logs-list__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.logs-list__name {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.logs-list__meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.logs-list__empty {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.logs-detail__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.logs-detail__name {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.logs-content {
+  max-height: 60vh;
+  overflow: auto;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: monospace;
+  font-size: 0.85rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* === Utility: an/hien === */
+.hidden {
+  display: none !important;
+}
+
+/* === Light theme override === */
+[data-theme="light"] {
+  --bg-primary: #f5f5fa;
+  --bg-secondary: #e8e8f0;
+  --bg-card: #ffffff;
+  --text-primary: #1a1b2e;
+  --text-secondary: #5a5a78;
+  --accent: #6c63ff;
+  --accent-hover: #5a52e0;
+  --danger: #e0334f;
+  --danger-hover: #c4283f;
+  --success: #2ea866;
+  --border: #d0d0e0;
+}

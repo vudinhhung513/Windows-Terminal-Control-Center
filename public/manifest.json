@@ -1,0 +1,12 @@
+{
+  "name": "Terminal Control Center",
+  "short_name": "Terminal",
+  "description": "Quan ly cac phien terminal Windows tu trinh duyet",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#1a1b2e",
+  "theme_color": "#1a1b2e"
+}

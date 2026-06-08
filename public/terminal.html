@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--
+  file: terminal.html
+  Chuc nang: Man hinh terminal ket noi WebSocket toi phien ConPTY.
+  Dung xterm.js + addon-fit de render terminal responsive.
+  Text mac dinh tieng Anh; i18n.js dich sang VI khi config.language='vi'.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- PWA: an thanh menu trinh duyet khi mo tu man hinh chinh (Add to Home Screen) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Terminal">
+  <meta name="theme-color" content="#1a1b2e">
+  <link rel="manifest" href="manifest.json">
+  <title>Terminal</title>
+  <link rel="stylesheet" href="vendor/xterm.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="terminal-page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header__actions">
+      <a href="index.html" class="btn btn--ghost btn--small" data-i18n="term.back">← Back</a>
+    </div>
+    <span id="session-title" class="header__title">Terminal</span>
+    <div></div>
+  </header>
+
+  <!-- Terminal container -->
+  <div id="terminal-container" class="terminal-container"></div>
+
+  <!-- O nhap lieu (an mac dinh; bat/tat bang nut toggle ⌨ tren control bar).
+       Soan van ban tai day (IME tieng Viet hoat dong), bam nut may bay giay
+       de CHEN ca doan vao terminal mot lan (khong kem Enter). -->
+  <form id="input-bar" class="input-bar hidden">
+    <input id="input-bar-field" class="input-bar__field" type="text" autocomplete="off"
+           autocapitalize="off" autocorrect="off" spellcheck="false"
+           data-i18n-placeholder="input.placeholder" placeholder="Type here, then insert…">
+    <button type="submit" class="ctrl-btn input-bar__send" data-i18n-title="input.send" title="Send" aria-label="Send">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+        <path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/>
+      </svg>
+    </button>
+  </form>
+
+  <!-- Thanh nut dieu khien (huu ich cho mobile / khong co phim cung) -->
+  <div id="control-bar" class="control-bar">
+    <button class="ctrl-btn" data-toggle="input" data-i18n-title="ctrl.toggleInput" title="Toggle input box">⌨</button>
+    <span class="control-bar__sep"></span>
+    <button class="ctrl-btn" data-key="esc" data-i18n-title="ctrl.esc" title="ESC">ESC</button>
+    <button class="ctrl-btn" data-key="ctrlc" data-i18n-title="ctrl.ctrlc" title="Ctrl+C">^C</button>
+    <button class="ctrl-btn" data-key="tab" data-i18n-title="ctrl.tab" title="Tab">Tab</button>
+    <button class="ctrl-btn" data-mod="ctrl" data-i18n-title="ctrl.ctrl" title="Ctrl">Ctrl</button>
+    <button class="ctrl-btn" data-mod="shift" data-i18n-title="ctrl.shift" title="Shift">Shift</button>
+    <span class="control-bar__sep"></span>
+    <button class="ctrl-btn" data-key="left" data-i18n-title="ctrl.left" title="Left">←</button>
+    <button class="ctrl-btn" data-key="up" data-i18n-title="ctrl.up" title="Up">↑</button>
+    <button class="ctrl-btn" data-key="down" data-i18n-title="ctrl.down" title="Down">↓</button>
+    <button class="ctrl-btn" data-key="right" data-i18n-title="ctrl.right" title="Right">→</button>
+    <span class="control-bar__sep"></span>
+    <button class="ctrl-btn" data-action="copy" data-i18n-title="ctrl.copy" title="Copy">⧉</button>
+    <button class="ctrl-btn" data-action="paste" data-i18n-title="ctrl.paste" title="Paste">⎘</button>
+    <span class="control-bar__sep"></span>
+    <button class="ctrl-btn" data-scroll="up" data-i18n-title="ctrl.scrollUp" title="Scroll up">▲</button>
+    <button class="ctrl-btn" data-scroll="down" data-i18n-title="ctrl.scrollDown" title="Scroll down">▼</button>
+    <span class="control-bar__sep"></span>
+    <button class="ctrl-btn" data-key="enter" data-i18n-title="ctrl.enter" title="Enter">⏎</button>
+  </div>
+
+  <!-- Nut ket noi lai (an mac dinh) -->
+  <div id="reconnect-overlay" class="reconnect-overlay hidden">
+    <button id="btn-reconnect" class="btn btn--primary" data-i18n="term.reconnect">Reconnect</button>
+  </div>
+
+  <script src="vendor/xterm.js"></script>
+  <script src="vendor/addon-fit.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/terminal.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Cau hinh runtime + du lieu (co the chua secret/log, khong commit)
+config.json
+data/
+
+# Log & file tam
+*.log
+*.tmp
+*.swp
+
+# OS
+.DS_Store
+
+# Artifact cua cong cu (skills/agents - khong thuoc ma nguon du an)
+.agents/
+skills-lock.json
+
+# Artifact Ruflo / claude-flow (cong cu orchestration, khong thuoc ma nguon)
+.claude-flow/
+.swarm/
+.ruflo/

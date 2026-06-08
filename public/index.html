@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<!--
+  file: index.html
+  Chuc nang: Trang dashboard chinh cua Terminal Control Center.
+  Hien thi danh sach phien terminal, cho phep tao/xoa/mo phien.
+  Text mac dinh tieng Anh; i18n.js dich sang VI khi config.language='vi'.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- PWA: an thanh menu trinh duyet khi mo tu man hinh chinh (Add to Home Screen) -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Terminal">
+  <meta name="theme-color" content="#1a1b2e">
+  <link rel="manifest" href="manifest.json">
+  <title>Terminal Control Center</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <h1 class="header__title"><span data-i18n="app.title">Terminal Control Center</span> <span id="app-version" class="app-version"></span></h1>
+    <div class="header__actions">
+      <button id="btn-logs" class="btn btn--ghost btn--small hidden" data-i18n="btn.logs" data-i18n-title="btn.logs">&#x1F4C4; Logs</button>
+      <button id="btn-theme" class="btn btn--ghost btn--small btn--icon" data-i18n-title="btn.theme" aria-label="Theme">&#x1F319;</button>
+      <button id="btn-settings" class="btn btn--ghost btn--small hidden" data-i18n="btn.settings" data-i18n-title="btn.settings">&#9881; Settings</button>
+      <button id="btn-logout" class="btn btn--ghost btn--small hidden" data-i18n="btn.logout">Log out</button>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container">
+
+    <!-- Thong bao loi chung -->
+    <div id="msg-global" class="message hidden"></div>
+
+    <!-- Form dang nhap (an mac dinh) -->
+    <div id="login-section" class="login-wrapper hidden">
+      <form id="login-form" class="login-form">
+        <h2 class="login-form__title" data-i18n="login.title">Log in</h2>
+        <div id="msg-login" class="message message--error hidden"></div>
+        <input id="input-password" class="input" type="password" data-i18n-placeholder="login.password" placeholder="Password" required>
+        <button type="submit" class="btn btn--primary" data-i18n="login.submit">Log in</button>
+      </form>
+    </div>
+
+    <!-- Dashboard (an mac dinh) -->
+    <section id="dashboard-section" class="hidden">
+      <!-- Canh bao bao mat -->
+      <div id="security-warning" class="message message--error hidden"></div>
+
+      <!-- Toolbar tao phien -->
+      <div class="toolbar">
+        <input id="input-session-name" class="input" type="text" data-i18n-placeholder="toolbar.sessionName" placeholder="Session name (option, only A-Z a-z 0-9 _ -)">
+        <select id="input-shell" class="input" data-i18n-title="toolbar.shell" title="Shell"></select>
+        <button id="btn-create" class="btn btn--primary" data-i18n="toolbar.create">+ New session</button>
+      </div>
+
+      <!-- Danh sach phien -->
+      <div id="session-list" class="session-list"></div>
+    </section>
+
+  </main>
+
+  <!-- Modal Settings (an mac dinh) -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal__backdrop" id="settings-backdrop"></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <div class="modal__header">
+        <h2 id="settings-title" class="modal__title" data-i18n="settings.title">Settings</h2>
+        <button id="btn-settings-close" class="btn btn--ghost btn--small" data-i18n-title="settings.close" aria-label="Close">&times;</button>
+      </div>
+
+      <form id="settings-form" class="settings-form">
+        <!-- Nhom: Bao mat / xac thuc -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.authLegend">Authentication</legend>
+          <label class="settings-row">
+            <input id="set-auth-enabled" type="checkbox">
+            <span data-i18n="settings.authEnabled">Require password to access</span>
+          </label>
+          <label class="settings-field">
+            <span><span data-i18n="settings.newPassword">New password</span> <small data-i18n="settings.newPasswordHint">(leave blank to keep)</small></span>
+            <input id="set-password" class="input" type="password" autocomplete="new-password" placeholder="••••••••">
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Mang -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.netLegend">Network (requires restart)</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.host">Host</span>
+            <input id="set-host" class="input" type="text" placeholder="0.0.0.0">
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.port">Port</span>
+            <input id="set-port" class="input" type="number" min="1" max="65535" placeholder="7171">
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Terminal / font -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.fontLegend">Terminal font</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.fontFamily">Font family</span>
+            <input id="set-font-family" class="input" type="text" placeholder="monospace">
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.fontSize">Desktop font size (8–40)</span>
+            <input id="set-font-size" class="input" type="number" min="8" max="40" placeholder="14">
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.fontSizeMobile">Mobile font size (8–40)</span>
+            <input id="set-font-size-mobile" class="input" type="number" min="8" max="40" placeholder="12">
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Phien moi (default path) -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.sessionLegend">New session</legend>
+          <label class="settings-field">
+            <span><span data-i18n="settings.defaultPath">Default path</span> <small data-i18n="settings.defaultPathHint">(blank = shell default)</small></span>
+            <input id="set-default-path" class="input" type="text" placeholder="~/projects">
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Bang ma (encoding) -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.encodingLegend">Encoding</legend>
+          <label class="settings-field">
+            <span><span data-i18n="settings.encoding">Character encoding</span> <small data-i18n="settings.encodingHint">(reopen terminal after change)</small></span>
+            <select id="set-encoding" class="input">
+              <option value="utf-8">UTF-8 (default)</option>
+              <option value="gbk">GBK (Simplified Chinese)</option>
+              <option value="gb2312">GB2312 (Simplified Chinese)</option>
+              <option value="big5">Big5 (Traditional Chinese)</option>
+              <option value="euc-kr">EUC-KR (Korean)</option>
+              <option value="shift_jis">Shift_JIS (Japanese)</option>
+              <option value="euc-jp">EUC-JP (Japanese)</option>
+              <option value="tis-620">TIS-620 (Thai)</option>
+              <option value="windows-1251">Windows-1251 (Cyrillic)</option>
+              <option value="windows-1252">Windows-1252 (Western)</option>
+              <option value="iso-8859-1">ISO-8859-1 (Latin-1)</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Truy cap da thiet bi -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.multiDeviceLegend">Multi-device access</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.multiDevice">When a session is open on another device</span>
+            <select id="set-multi-device" class="input">
+              <option value="takeover" data-i18n="settings.multiDeviceTakeover">Take over (disconnect the other device)</option>
+              <option value="lock" data-i18n="settings.multiDeviceLock">Lock (block the new device)</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Ghi log terminal -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.logLegend">Terminal logging</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.logMode">Log level</span>
+            <select id="set-log-mode" class="input">
+              <option value="off" data-i18n="settings.logModeOff">Off</option>
+              <option value="input" data-i18n="settings.logModeInput">Input only (commands)</option>
+              <option value="full" data-i18n="settings.logModeFull">Full (input + output)</option>
+            </select>
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.logRetention">Retention (days)</span>
+            <input id="set-log-retention" class="input" type="number" min="1" placeholder="7">
+          </label>
+          <p class="settings-hint settings-hint--warn" data-i18n="settings.logWarn">Warning: logging may record passwords typed at prompts (sudo/ssh). Logs are stored on the server in data/logs/.</p>
+        </fieldset>
+
+        <!-- Nhom: Rate-limit dang nhap -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.rlLegend">Login brute-force protection</legend>
+          <label class="settings-row">
+            <input id="set-rl-enabled" type="checkbox">
+            <span data-i18n="settings.rlEnabled">Enable attempt limit</span>
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.rlMax">Max attempts</span>
+            <input id="set-rl-max" class="input" type="number" min="1" placeholder="5">
+          </label>
+          <label class="settings-field">
+            <span data-i18n="settings.rlWindow">Within window (seconds)</span>
+            <input id="set-rl-window" class="input" type="number" min="1" placeholder="60">
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Ngon ngu -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.langLegend">Language</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.language">Interface language</span>
+            <select id="set-language" class="input">
+              <option value="en">English</option>
+              <option value="vi">Tiếng Việt</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Giao dien (theme) -->
+        <fieldset class="settings-group">
+          <legend data-i18n="settings.themeLegend">Theme</legend>
+          <label class="settings-field">
+            <span data-i18n="settings.theme">Color theme</span>
+            <select id="set-theme" class="input">
+              <option value="dark" data-i18n="theme.dark">Dark</option>
+              <option value="light" data-i18n="theme.light">Light</option>
+              <option value="auto" data-i18n="theme.auto">Auto (system)</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <!-- Nhom: Xac nhan mat khau hien tai (chi hien khi auth bat) -->
+        <fieldset id="settings-confirm-group" class="settings-group hidden">
+          <legend data-i18n="settings.confirmLegend">Confirm</legend>
+          <label class="settings-field">
+            <span><span data-i18n="settings.currentPassword">Current password</span> <small data-i18n="settings.currentPasswordHint">(required for sensitive changes)</small></span>
+            <input id="set-current-password" class="input" type="password" autocomplete="current-password">
+          </label>
+        </fieldset>
+
+        <!-- Thong bao ket qua luu (dat ngay truoc nut Save de de thay) -->
+        <div id="msg-settings" class="message hidden"></div>
+
+        <div class="modal__footer">
+          <button type="button" id="btn-settings-cancel" class="btn btn--ghost" data-i18n="settings.cancel">Cancel</button>
+          <button type="submit" class="btn btn--primary" data-i18n="settings.save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Logs (an mac dinh; chi mo khi logging dang bat) -->
+  <div id="logs-modal" class="modal hidden">
+    <div class="modal__backdrop" id="logs-backdrop"></div>
+    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="logs-title">
+      <div class="modal__header">
+        <h2 id="logs-title" class="modal__title" data-i18n="logs.title">Logs</h2>
+        <button id="btn-logs-close" class="btn btn--ghost btn--small" data-i18n-title="logs.close" aria-label="Close">&times;</button>
+      </div>
+
+      <!-- Danh sach file log (an khi dang xem chi tiet) -->
+      <div id="logs-list-view">
+        <p class="settings-hint" data-i18n="logs.hint">View-only. Logs are read-only here; you can view or delete but not edit them.</p>
+        <div id="logs-list" class="logs-list"></div>
+      </div>
+
+      <!-- Xem chi tiet noi dung mot log (read-only) -->
+      <div id="logs-detail-view" class="hidden">
+        <div class="logs-detail__bar">
+          <button id="btn-logs-back" class="btn btn--ghost btn--small" data-i18n="logs.back">← Back</button>
+          <span id="logs-detail-name" class="logs-detail__name"></span>
+        </div>
+        <pre id="logs-content" class="logs-content" readonly></pre>
+      </div>
+
+      <div id="msg-logs" class="message hidden"></div>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "host": "0.0.0.0",
+  "port": 7171,
+  "authEnabled": false,
+  "password": "",
+  "sessionSecret": "REPLACE_WITH_RANDOM_SECRET",
+  "shell": "PowerShell",
+  "shells": ["cmd", "PowerShell", "pwsh", "wsl", "gitbash"],
+  "theme": "dark",
+  "defaultPath": "",
+  "sessionPrefix": "wtcc",
+  "serverScrollbackBytes": 1048576,
+  "termFontFamily": "monospace",
+  "termFontSize": 14,
+  "termFontSizeMobile": 12,
+  "termEncoding": "utf-8",
+  "multiDeviceMode": "takeover",
+  "logging": {
+    "mode": "off",
+    "retentionDays": 7
+  },
+  "language": "en",
+  "loginRateLimit": {
+    "enabled": true,
+    "maxAttempts": 5,
+    "windowMs": 60000
+  },
+  "tls": {
+    "enabled": true,
+    "keyPath": "data/tls/key.pem",
+    "certPath": "data/tls/cert.pem"
+  }
+}
