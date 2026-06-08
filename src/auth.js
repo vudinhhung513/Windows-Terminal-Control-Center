@@ -7,9 +7,32 @@ import { randomBytes } from 'node:crypto';
 import { verifyPassword } from './password.js';
 
 const COOKIE_NAME = 'tcc_session';
+// Gia tri co so cua cookie phien. Cookie moi nhung them moc het han dang
+// 'authed:<expiresAtMs>'; gia tri tho 'authed' van duoc chap nhan (tuong thich
+// nguoc voi cookie cu va che do session cookie khong han).
 const COOKIE_VALUE = 'authed';
 const CSRF_COOKIE = 'tcc_csrf';
 const CSRF_HEADER = 'x-csrf-token';
+
+/**
+ * Dung gia tri + option cho cookie phien dang nhap theo config.
+ * - sessionMaxAgeHours > 0: nhung moc het han vao gia tri (server tu enforce)
+ *   va dat maxAge cho trinh duyet.
+ * - sessionMaxAgeHours = 0 (hoac khong hop le): session cookie khong han.
+ * @param {object} config
+ * @returns {{ value: string, options: object }}
+ */
+function buildSessionCookie(config) {
+  const options = { path: '/', signed: true, httpOnly: true, sameSite: 'strict' };
+  const hours = Number(config.sessionMaxAgeHours);
+  if (Number.isFinite(hours) && hours > 0) {
+    const seconds = Math.round(hours * 3600);
+    options.maxAge = seconds; // trinh duyet tu xoa khi het han
+    const expiresAt = Date.now() + seconds * 1000;
+    return { value: `${COOKIE_VALUE}:${expiresAt}`, options };
+  }
+  return { value: COOKIE_VALUE, options };
+}
 
 // === Rate-limit dang nhap (in-memory theo IP) ===
 // Map<ip, { count: number, resetAt: number }>
@@ -57,7 +80,17 @@ export function isAuthed(request, config) {
   if (!cookieVal) return false;
 
   const unsigned = request.unsignCookie(cookieVal);
-  return unsigned.valid && unsigned.value === COOKIE_VALUE;
+  if (!unsigned.valid || typeof unsigned.value !== 'string') return false;
+
+  // Gia tri tho 'authed' (session cookie khong han / tuong thich cookie cu)
+  if (unsigned.value === COOKIE_VALUE) return true;
+
+  // Gia tri co nhung moc het han: 'authed:<expiresAtMs>'
+  const sep = unsigned.value.indexOf(':');
+  if (sep === -1 || unsigned.value.slice(0, sep) !== COOKIE_VALUE) return false;
+  const expiresAt = Number(unsigned.value.slice(sep + 1));
+  if (!Number.isFinite(expiresAt)) return false;
+  return Date.now() < expiresAt;
 }
 
 /**
@@ -137,14 +170,10 @@ async function authPlugin(fastify, opts) {
       return;
     }
 
-    // Dang nhap thanh cong → reset rate-limit + set cookie phien
+    // Dang nhap thanh cong → reset rate-limit + set cookie phien (kem moc het han)
     resetRateLimit(ip);
-    reply.setCookie(COOKIE_NAME, COOKIE_VALUE, {
-      path: '/',
-      signed: true,
-      httpOnly: true,
-      sameSite: 'strict'
-    });
+    const { value, options } = buildSessionCookie(config);
+    reply.setCookie(COOKIE_NAME, value, options);
 
     return { ok: true };
   });

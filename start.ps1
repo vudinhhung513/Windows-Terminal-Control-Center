@@ -1,6 +1,12 @@
 # start.ps1
 # Chuc nang: Script khoi dong thu cong cho Windows Terminal Control Center.
 # Kiem tra moi truong (Node.js), cai dat dependencies neu can, va chay server.
+#
+# Neu gap loi "running scripts is disabled on this system" (Execution Policy):
+#   - Chay 1 lan cho phien hien tai:  Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+#   - Hoac chay truc tiep:            powershell -ExecutionPolicy Bypass -File .\start.ps1
+#   - Luu y phai go co tien to .\     (vd: .\start.ps1), khong go "start.ps1".
+#   Xem them muc "Loi: khong chay duoc script" trong README.md.
 
 $ErrorActionPreference = 'Stop'
 

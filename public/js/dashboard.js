@@ -438,6 +438,7 @@
         document.getElementById('set-password').value = '';
         document.getElementById('set-host').value = cfg.host;
         document.getElementById('set-port').value = cfg.port;
+        document.getElementById('set-session-maxage').value = (cfg.sessionMaxAgeHours !== undefined ? cfg.sessionMaxAgeHours : 720);
         document.getElementById('set-font-family').value = cfg.termFontFamily;
         document.getElementById('set-font-size').value = cfg.termFontSize;
         document.getElementById('set-font-size-mobile').value = cfg.termFontSizeMobile;
@@ -470,6 +471,7 @@
       authEnabled: document.getElementById('set-auth-enabled').checked,
       host: document.getElementById('set-host').value.trim(),
       port: Number(document.getElementById('set-port').value),
+      sessionMaxAgeHours: Number(document.getElementById('set-session-maxage').value),
       termFontFamily: document.getElementById('set-font-family').value.trim(),
       termFontSize: Number(document.getElementById('set-font-size').value),
       termFontSizeMobile: Number(document.getElementById('set-font-size-mobile').value),

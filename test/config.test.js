@@ -38,6 +38,11 @@ describe('config DEFAULTS', () => {
     assert.equal(DEFAULTS.sessionPrefix, 'wtcc');
   });
 
+  it('sessionMaxAgeHours la so nguyen trong 0..8760', () => {
+    assert.ok(Number.isInteger(DEFAULTS.sessionMaxAgeHours));
+    assert.ok(DEFAULTS.sessionMaxAgeHours >= 0 && DEFAULTS.sessionMaxAgeHours <= 8760);
+  });
+
   it('serverScrollbackBytes la so nguyen >= 65536', () => {
     assert.ok(Number.isInteger(DEFAULTS.serverScrollbackBytes));
     assert.ok(DEFAULTS.serverScrollbackBytes >= 65536);

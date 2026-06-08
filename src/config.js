@@ -18,6 +18,10 @@ export const DEFAULTS = {
   authEnabled: false,
   password: '',
   sessionSecret: 'REPLACE_WITH_RANDOM_SECRET',
+  // Thoi gian song cua cookie phien dang nhap (gio). > 0 = cookie het han sau
+  // so gio nay (server tu enforce + dat maxAge cho trinh duyet). 0 = session
+  // cookie (mat khi dong trinh duyet). Toi da 8760 (1 nam).
+  sessionMaxAgeHours: 720,
   shell: 'PowerShell',
   shells: ['cmd', 'PowerShell', 'pwsh', 'wsl', 'gitbash'],
   theme: 'dark',
@@ -63,6 +67,11 @@ function normalize(cfg) {
   // Validate termFontSize
   if (!Number.isInteger(c.termFontSize) || c.termFontSize < 6 || c.termFontSize > 72) {
     c.termFontSize = DEFAULTS.termFontSize;
+  }
+
+  // Validate sessionMaxAgeHours: so nguyen >= 0 (0 = session cookie), toi da 8760
+  if (!Number.isInteger(c.sessionMaxAgeHours) || c.sessionMaxAgeHours < 0 || c.sessionMaxAgeHours > 8760) {
+    c.sessionMaxAgeHours = DEFAULTS.sessionMaxAgeHours;
   }
 
   // Validate termFontSizeMobile

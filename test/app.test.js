@@ -202,6 +202,23 @@ describe('PUT /api/settings', () => {
     await app.close();
   });
 
+  it('tra ve 400 khi sessionMaxAgeHours khong hop le', async () => {
+    const app = await makeApp();
+    const { token, cookieStr } = await getCsrf(app);
+    const res = await app.inject({
+      method: 'PUT',
+      url: '/api/settings',
+      headers: {
+        'content-type': 'application/json',
+        'x-csrf-token': token,
+        cookie: cookieStr
+      },
+      body: JSON.stringify({ sessionMaxAgeHours: -5 })
+    });
+    assert.equal(res.statusCode, 400);
+    await app.close();
+  });
+
   it('tra ve 400 khi termFontSize vuot gioi han', async () => {
     const app = await makeApp();
     const { token, cookieStr } = await getCsrf(app);

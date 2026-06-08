@@ -64,6 +64,8 @@
     'settings.authEnabled': { en: 'Require password to access', vi: 'Yêu cầu mật khẩu khi truy cập' },
     'settings.newPassword': { en: 'New password', vi: 'Mật khẩu mới' },
     'settings.newPasswordHint': { en: '(leave blank to keep)', vi: '(để trống nếu không đổi)' },
+    'settings.sessionMaxAge': { en: 'Login session lifetime (hours)', vi: 'Thời gian sống của phiên đăng nhập (giờ)' },
+    'settings.sessionMaxAgeHint': { en: '(0 = until browser closes)', vi: '(0 = đến khi đóng trình duyệt)' },
     'settings.netLegend': { en: 'Network (requires restart)', vi: 'Mạng (cần khởi động lại)' },
     'settings.host': { en: 'Host', vi: 'Host' },
     'settings.port': { en: 'Port', vi: 'Port' },

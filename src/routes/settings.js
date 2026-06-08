@@ -39,6 +39,7 @@ function publicSettings(cfg) {
     theme: cfg.theme,
     defaultPath: cfg.defaultPath,
     sessionPrefix: cfg.sessionPrefix,
+    sessionMaxAgeHours: cfg.sessionMaxAgeHours,
     termFontFamily: cfg.termFontFamily,
     termFontSize: cfg.termFontSize,
     termFontSizeMobile: cfg.termFontSizeMobile,
@@ -75,7 +76,8 @@ async function settingsPlugin(fastify, opts) {
     const sensitive = body.password !== undefined ||
       body.authEnabled !== undefined ||
       body.host !== undefined ||
-      body.port !== undefined;
+      body.port !== undefined ||
+      body.sessionMaxAgeHours !== undefined;
     if (cfg.authEnabled && cfg.password && sensitive) {
       if (!verifyPassword(body.currentPassword || '', cfg.password)) {
         reply.code(401).send({ error: 'current password incorrect' });
@@ -98,6 +100,16 @@ async function settingsPlugin(fastify, opts) {
         return;
       }
       patch.port = p;
+    }
+
+    // Thoi gian song cookie phien (gio): so nguyen 0..8760 (0 = session cookie)
+    if (body.sessionMaxAgeHours !== undefined) {
+      const h = Number(body.sessionMaxAgeHours);
+      if (!Number.isInteger(h) || h < 0 || h > 8760) {
+        reply.code(400).send({ error: 'sessionMaxAgeHours must be an integer in 0..8760' });
+        return;
+      }
+      patch.sessionMaxAgeHours = h;
     }
 
     // Bat/tat auth

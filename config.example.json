@@ -4,6 +4,7 @@
   "authEnabled": false,
   "password": "",
   "sessionSecret": "REPLACE_WITH_RANDOM_SECRET",
+  "sessionMaxAgeHours": 720,
   "shell": "PowerShell",
   "shells": ["cmd", "PowerShell", "pwsh", "wsl", "gitbash"],
   "theme": "dark",

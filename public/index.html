@@ -87,6 +87,10 @@
             <span><span data-i18n="settings.newPassword">New password</span> <small data-i18n="settings.newPasswordHint">(leave blank to keep)</small></span>
             <input id="set-password" class="input" type="password" autocomplete="new-password" placeholder="••••••••">
           </label>
+          <label class="settings-field">
+            <span><span data-i18n="settings.sessionMaxAge">Login session lifetime (hours)</span> <small data-i18n="settings.sessionMaxAgeHint">(0 = until browser closes)</small></span>
+            <input id="set-session-maxage" class="input" type="number" min="0" max="8760" placeholder="720">
+          </label>
         </fieldset>
 
         <!-- Nhom: Mang -->

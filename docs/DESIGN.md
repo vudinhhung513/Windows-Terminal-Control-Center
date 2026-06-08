@@ -26,7 +26,7 @@ Server WTCC tự sở hữu phiên ConPTY in-process thông qua node-pty. Mỗi 
 - **Phiên chết khi server crash/restart** — không có cơ chế persist native. Đây là giới hạn cơ bản.
 - **RAM**: Mỗi phiên chiếm `serverScrollbackBytes` RAM. 100 phiên × 1 MiB = 100 MiB.
 - **Không detach/attach native**: "Detach" ở đây chỉ có nghĩa client ngắt WS, phiên vẫn chạy trong server process.
-- Giảm thiểu: Chạy WTCC như Windows Service (nssm) với auto-restart đảm bảo phiên tồn tại qua reboot/logout.
+- Giảm thiểu (một phần): Chạy WTCC như Windows Service (nssm, session 0) giúp phiên SỐNG QUA LOGOUT. Nhưng REBOOT vẫn kết thúc tiến trình server → phiên ConPTY và scrollback RAM mất; auto-restart chỉ giúp server tự sẵn sàng lại ngay, KHÔNG giữ phiên qua reboot.
 
 ---
 

@@ -28,6 +28,18 @@ Mục tiêu: đạt feature parity với TCC (bản Linux/tmux) trên nền tả
 
 > Các hướng dưới đây là **cân nhắc**, chưa cam kết timeline. Ưu tiên có thể thay đổi theo nhu cầu thực tế.
 
+### Hub quản lý nhiều instance (TCC/WTCC)
+
+- **Mục tiêu**: xây dựng một "Hub" trung tâm — single pane of glass — để xem và điều khiển nhiều instance TCC (Linux/macOS) và WTCC (Windows) từ một giao diện duy nhất, đăng nhập một lần.
+- **Vai trò Hub**:
+  - Registry các instance: tên, địa chỉ, nền tảng (Linux/Windows), trạng thái online/offline.
+  - Tổng hợp danh sách phiên từ mọi instance.
+  - Proxy/định tuyến terminal WebSocket tới instance đích.
+  - Xác thực tập trung (SSO): người dùng đăng nhập Hub một lần, truy cập mọi instance qua Hub.
+- **Vai trò Instance (TCC/WTCC)**: đóng vai "agent/node" — giữ nguyên toàn bộ chức năng hiện tại (quản lý phiên, REST API, WebSocket, auth cục bộ). Chỉ bổ sung khả năng đăng ký với Hub và endpoint cho Hub gọi.
+- **Trạng thái**: định hướng nghiên cứu, chưa cam kết timeline.
+- **Chi tiết kiến trúc**: xem [docs/HUB.md](HUB.md).
+
 ### Persistence phiên (nghiên cứu)
 
 - Lưu/restore scrollback ra đĩa khi server shutdown gracefully → phục hồi lịch sử khi restart.
