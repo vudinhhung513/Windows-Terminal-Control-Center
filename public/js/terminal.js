@@ -350,6 +350,23 @@
   // Map phim mui ten -> ky tu cuoi escape sequence (dung khi co modifier)
   var ARROW_FINAL = { up: 'A', down: 'B', right: 'C', left: 'D' };
 
+  // Phim non-character co ho tro phim bo tro (Ctrl/Shift) qua resolveKeyCombo:
+  // anh xa e.key (KeyboardEvent) -> khoa noi bo trong KEY_MAP.
+  var NAV_COMBO_KEY = {
+    Enter: 'enter', Tab: 'tab', Escape: 'esc',
+    ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right'
+  };
+
+  // Phim non-character con lai -> chuoi escape gui thang (khong kem modifier).
+  var NAV_KEY_MAP = {
+    Backspace: '\x7f', Delete: '\x1b[3~',
+    Home: '\x1b[H', End: '\x1b[F',
+    PageUp: '\x1b[5~', PageDown: '\x1b[6~', Insert: '\x1b[2~',
+    F1: '\x1bOP', F2: '\x1bOQ', F3: '\x1bOR', F4: '\x1bOS',
+    F5: '\x1b[15~', F6: '\x1b[17~', F7: '\x1b[18~', F8: '\x1b[19~',
+    F9: '\x1b[20~', F10: '\x1b[21~', F11: '\x1b[23~', F12: '\x1b[24~'
+  };
+
   /**
    * Dung chuoi escape cho phim dac biet (Tab/ESC/Enter/mui ten) co kem phim bo
    * tro Ctrl/Shift dang cho. Theo chuan xterm modifier m = 1 + shift + ctrl*4:
@@ -518,11 +535,11 @@
     });
   }
 
-  // Khi o nhap RONG: cac phim dieu huong/dieu khien duoc gui THANG vao terminal
-  // (Enter chay lenh, Backspace xoa lui, Delete xoa toi) thay vi chi soan trong
-  // o. Khi o CO text thi giu nguyen hanh vi soan thao binh thuong (Enter -> submit
-  // chen text, Backspace/Delete sua noi dung o). Cung ho tro phim bo tro dinh
-  // (Ctrl) cho ky tu don khi o rong (vd bam Ctrl roi 'c' -> ^C).
+  // Khi o nhap RONG: cac phim non-character (Enter/Tab/ESC/mui ten/Backspace/
+  // Delete/Home/End/PageUp/PageDown/Insert/F1-F12) duoc gui THANG vao terminal
+  // thay vi chi soan trong o. Khi o CO text thi giu nguyen hanh vi soan thao
+  // binh thuong. Cung ho tro phim bo tro dinh (Ctrl/Shift) cho ky tu don va cho
+  // cac phim non-character co modifier khi o rong (vd Ctrl roi 'c' -> ^C).
   if (inputBarField) {
     inputBarField.addEventListener('keydown', function (e) {
       var empty = inputBarField.value === '';
@@ -537,16 +554,23 @@
 
       if (!empty) return;
 
-      if (e.key === 'Enter') {
-        e.preventDefault(); // chan submit (von khong gui gi khi rong)
-        sendInput(KEY_MAP.enter);
+      // Phim non-character co ho tro modifier (Enter/Tab/ESC/mui ten):
+      // ket hop Ctrl/Shift dang cho qua resolveKeyCombo roi gui thang.
+      var comboKey = NAV_COMBO_KEY[e.key];
+      if (comboKey) {
+        e.preventDefault();
+        sendInput(resolveKeyCombo(comboKey, pendingCtrl, pendingShift));
         clearModifiers();
-      } else if (e.key === 'Backspace') {
+        return;
+      }
+
+      // Phim non-character con lai (Backspace/Delete/Home/End/PageUp...
+      // /Insert/F1-F12): gui escape sequence tuong ung thang vao terminal.
+      var navSeq = NAV_KEY_MAP[e.key];
+      if (navSeq !== undefined) {
         e.preventDefault();
-        sendInput('\x7f'); // DEL: backspace chuan terminal
-      } else if (e.key === 'Delete') {
-        e.preventDefault();
-        sendInput('\x1b[3~'); // escape sequence phim Delete
+        sendInput(navSeq);
+        clearModifiers();
       }
     });
   }
